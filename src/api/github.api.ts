@@ -6,6 +6,6 @@ export const githubApi = axios.create({
     baseURL: API_URL,
     headers: {
         "Content-Type": "application/json",
-        //TODO! Add GitHub apiKey
+        Authorization: `Bearer ${import.meta.env.VITE_GITHUB_API_KEY}`,
     },
 });
