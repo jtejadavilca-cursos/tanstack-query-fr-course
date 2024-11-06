@@ -1,7 +1,17 @@
+import { FC } from "react";
 import { useLabels } from "../../hooks/useLabels";
 import { LoadingSpiner } from "../../shared/components/LoadingSpiner";
 
-export const LabelPicker = () => {
+interface Props {
+    selectedLabels: string[];
+    onLabelSelected: (label: string) => void;
+}
+
+const checkIfSelected = (label: string, selectedLabels: string[]) => {
+    return selectedLabels.includes(label) ? "selected-label" : "";
+};
+
+export const LabelPicker: FC<Props> = ({ selectedLabels, onLabelSelected }) => {
     const { labelsQuery } = useLabels();
 
     if (labelsQuery.isLoading) {
@@ -17,7 +27,11 @@ export const LabelPicker = () => {
             {labelsQuery.data?.map((label) => (
                 <span
                     key={label.id}
-                    className="animate-fadeIn px-2 py-1 rounded-full text-xs font-semibold hover:bg-slate-800 cursor-pointer text-white"
+                    onClick={() => onLabelSelected(label.name)}
+                    className={`animate-fadeIn px-2 py-1 rounded-full text-xs font-semibold hover:bg-slate-800 cursor-pointer text-white ${checkIfSelected(
+                        label.name,
+                        selectedLabels
+                    )}`}
                     style={{ border: `1px solid #${label.color}` }}
                 >
                     {label.name}

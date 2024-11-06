@@ -8,9 +8,9 @@ export const fetchGithubDataSingle = async <T>(endpoint: string): Promise<T> => 
     return data;
 };
 
-export const fetchGithubData = async <T>(endpoint: string): Promise<T[]> => {
+export const fetchGithubData = async <T>(endpoint: string, params: URLSearchParams): Promise<T[]> => {
     await sleep(1500);
-    const { data } = await githubApi.get<T[]>(endpoint);
+    const { data } = await githubApi.get<T[]>(endpoint, { params });
 
     return data;
 };
