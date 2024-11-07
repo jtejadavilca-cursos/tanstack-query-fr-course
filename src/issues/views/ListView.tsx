@@ -8,7 +8,10 @@ export const ListView = () => {
     const [state, setState] = useState<State>(State.All);
     const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
 
-    const { issuesQuery } = useIssues({ state, selectedLabels });
+    const { issuesQuery, currentPage, nextPage, previousPage, prefetchData, resetPage } = useIssues({
+        state,
+        selectedLabels,
+    });
 
     const issues = issuesQuery.data ?? [];
 
@@ -18,6 +21,12 @@ export const ListView = () => {
         } else {
             setSelectedLabels([...selectedLabels, label]);
         }
+        resetPage();
+    };
+
+    const handleStageChange = (state: State) => {
+        setState(state);
+        resetPage();
     };
 
     return (
@@ -26,11 +35,34 @@ export const ListView = () => {
                 {issuesQuery.isLoading ? (
                     <LoadingSpiner />
                 ) : (
-                    <IssueList issues={issues} onStateChange={setState} selectedState={state} />
+                    <>
+                        <IssueList issues={issues} onStateChange={handleStageChange} selectedState={state} />
+                        <div className="flex justify-between items-center">
+                            <button
+                                className="bg-blue-500 rounded-md hover:bg-blue-700 transition-all text-white font-bold py-2 px-4"
+                                disabled={currentPage === 1}
+                                onClick={previousPage}
+                                onMouseMove={() => prefetchData(-1)}
+                            >
+                                Anteriores
+                            </button>
+                            <span>{currentPage}</span>
+                            <button
+                                className="bg-blue-500 rounded-md hover:bg-blue-700 transition-all text-white font-bold py-2 px-4"
+                                onClick={nextPage}
+                                onMouseMove={() => prefetchData(1)}
+                            >
+                                Siguientes
+                            </button>
+                        </div>
+                    </>
                 )}
             </div>
 
             <div className="col-span-1 px-2">
+                <span style={{ visibility: selectedLabels.length > 0 ? "visible" : "hidden" }}>
+                    Selected labels ({selectedLabels.length})
+                </span>
                 <LabelPicker onLabelSelected={onLabelSelected} selectedLabels={selectedLabels} />
             </div>
         </div>

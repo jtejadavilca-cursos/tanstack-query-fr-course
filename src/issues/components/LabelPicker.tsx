@@ -28,7 +28,7 @@ export const LabelPicker: FC<Props> = ({ selectedLabels, onLabelSelected }) => {
                 <span
                     key={label.id}
                     onClick={() => onLabelSelected(label.name)}
-                    className={`animate-fadeIn px-2 py-1 rounded-full text-xs font-semibold hover:bg-slate-800 cursor-pointer text-white ${checkIfSelected(
+                    className={`animate-fadeIn px-2 py-1 rounded-full text-xs font-semibold hover:bg-green-400 cursor-pointer text-white ${checkIfSelected(
                         label.name,
                         selectedLabels
                     )}`}

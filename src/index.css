@@ -44,5 +44,5 @@ pre {
 }
 
 .selected-label {
-    @apply bg-slate-700 shadow-sm transition-all;
+    @apply bg-green-600 shadow-sm transition-all;
 }
