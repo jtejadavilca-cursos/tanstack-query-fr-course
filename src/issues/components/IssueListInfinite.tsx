@@ -1,7 +1,7 @@
 import { FC } from "react";
-import { IssueItem } from "./";
+import { IssueItem } from ".";
 import { GithubIssue, State } from "../interfaces";
-import { useIssues } from "../../hooks";
+import { useIssuesInfinite } from "../../hooks";
 import { LoadingSpiner } from "../../shared/components";
 
 interface IssueListProps {
@@ -14,12 +14,12 @@ const getActiveState = (selectedState: State, state: State) => {
     return selectedState === state ? "active" : "";
 };
 
-export const IssueList: FC<IssueListProps> = ({ selectedState, selectedLabels, onStateChange }) => {
-    const { issuesQuery, currentPage, nextPage, previousPage, prefetchData } = useIssues({
+export const IssueListInfinite: FC<IssueListProps> = ({ selectedState, selectedLabels, onStateChange }) => {
+    const { issuesQuery /*, prefetchData*/ } = useIssuesInfinite({
         state: selectedState,
         selectedLabels,
     });
-    const issues: GithubIssue[] = issuesQuery.data ?? [];
+    const issues: GithubIssue[] = issuesQuery.data?.pages.flat() ?? [];
 
     if (issuesQuery.isLoading) {
         return <LoadingSpiner />;
@@ -56,24 +56,13 @@ export const IssueList: FC<IssueListProps> = ({ selectedState, selectedLabels, o
                 ))}
             </div>
 
-            <div className="flex justify-between items-center">
-                <button
-                    className="bg-blue-500 rounded-md hover:bg-blue-700 transition-all text-white font-bold py-2 px-4"
-                    disabled={currentPage === 1}
-                    onClick={previousPage}
-                    onMouseMove={() => prefetchData(-1)}
-                >
-                    Anteriores
-                </button>
-                <span>{currentPage}</span>
-                <button
-                    className="bg-blue-500 rounded-md hover:bg-blue-700 transition-all text-white font-bold py-2 px-4"
-                    onClick={nextPage}
-                    onMouseMove={() => prefetchData(1)}
-                >
-                    Siguientes
-                </button>
-            </div>
+            <button
+                onClick={() => issuesQuery.fetchNextPage()}
+                disabled={!issuesQuery.hasNextPage || issuesQuery.isFetchingNextPage}
+                className="bg-blue-500 rounded-md hover:bg-blue-700 transition-all text-white font-bold py-2 w-full disabled:bg-gray-500 disabled:cursor-not-allowed"
+            >
+                {issuesQuery.isFetchingNextPage ? "Cargando..." : "Cargar más..."}
+            </button>
         </>
     );
 };

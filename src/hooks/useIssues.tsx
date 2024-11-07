@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getIssues } from "../issues/actions";
 import { State } from "../issues/interfaces";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Props {
     state: State;
@@ -15,6 +15,9 @@ export const useIssues = ({ state, selectedLabels }: Props) => {
         queryFn: () => getIssues(state, selectedLabels, currentPage),
         staleTime: 1000 * 60 * 60, // 1 hour
     });
+
+    useEffect(() => resetPage(), [state]);
+    useEffect(() => resetPage(), [selectedLabels]);
 
     const queryClient = useQueryClient();
     const prefetchData = (page: number) => {
@@ -45,7 +48,6 @@ export const useIssues = ({ state, selectedLabels }: Props) => {
         issuesQuery,
         currentPage,
 
-        resetPage,
         prefetchData,
         nextPage,
         previousPage,
